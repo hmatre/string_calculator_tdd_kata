@@ -2,7 +2,8 @@ require "rspec"
 class StringCalculator
   def add(numbers)
     return 0 if numbers.empty?
-    numbers.split(",").map(&:to_i).sum
+    delimiters = /,|\n/
+    numbers.split(delimiters).map(&:to_i).sum
   end
 end
 
@@ -26,6 +27,10 @@ describe StringCalculator do
 
   it "returns the sum of multiple numbers" do
     expect(calculator.add("1,2,3,4,5")).to eq(15)
+  end
+
+  it "handles new lines between numbers" do
+    expect(calculator.add("1\n2,3")).to eq(6)
   end
 
 end
