@@ -2,8 +2,13 @@ require "rspec"
 class StringCalculator
   def add(numbers)
     return 0 if numbers.empty?
-    delimiters = /,|\n/
-    numbers.split(delimiters).map(&:to_i).sum
+    if numbers.start_with?("//")
+      delimiter, numbers = numbers[2..].split("\n", 2)
+      numbers.split(delimiter).map(&:to_i).sum
+    else
+      delimiters = /,|\n/
+      numbers.split(delimiters).map(&:to_i).sum
+    end
   end
 end
 
@@ -31,6 +36,10 @@ describe StringCalculator do
 
   it "handles new lines between numbers" do
     expect(calculator.add("1\n2,3")).to eq(6)
+  end
+
+  it "supports different delimiters" do
+    expect(calculator.add("//;\n1;2")).to eq(3)
   end
 
 end
