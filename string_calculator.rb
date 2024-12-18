@@ -4,11 +4,16 @@ class StringCalculator
     return 0 if numbers.empty?
     if numbers.start_with?("//")
       delimiter, numbers = numbers[2..].split("\n", 2)
-      numbers.split(delimiter).map(&:to_i).sum
+      numbers_array = numbers.split(delimiter).map(&:to_i)
     else
       delimiters = /,|\n/
-      numbers.split(delimiters).map(&:to_i).sum
+      numbers_array = numbers.split(delimiters).map(&:to_i)
     end
+
+    negatives = numbers_array.select { |n| n < 0 }
+    raise "Negative numbers not allowed: #{negatives.join(', ')}" unless negatives.empty?
+
+    numbers_array.sum
   end
 end
 
@@ -40,6 +45,10 @@ describe StringCalculator do
 
   it "supports different delimiters" do
     expect(calculator.add("//;\n1;2")).to eq(3)
+  end
+
+  it "raises an exception for negative numbers" do
+    expect { calculator.add("1,-2,3,-4") }.to raise_error("Negative numbers not allowed: -2, -4")
   end
 
 end
